@@ -40,3 +40,15 @@ services:
       - "4442:4442"
       - "4443:4443"
       - "4444:4444"
+
+
+  selenium-hub-test:
+    image: selenium/node-base:4.1.1-20211217
+    container_name: selenium-hub-test
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    volumes:
+      - "./sources.list:/etc/apt/sources.list"
+      - "./chrome.deb:/tmp/chrome.deb"

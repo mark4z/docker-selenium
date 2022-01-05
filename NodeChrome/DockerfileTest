@@ -1,0 +1,36 @@
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# NOTE: DO *NOT* EDIT THIS FILE.  IT IS GENERATED.
+# PLEASE UPDATE Dockerfile.txt INSTEAD OF THIS FILE
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+FROM selenium/node-base:4.1.1-20211217
+LABEL authors=SeleniumHQ
+
+USER root
+
+#============================================
+# Google Chrome
+#============================================
+# can specify versions by CHROME_VERSION;
+#  e.g. google-chrome-stable=53.0.2785.101-1
+#       google-chrome-beta=53.0.2785.92-1
+#       google-chrome-unstable=54.0.2840.14-1
+#       latest (equivalent to google-chrome-stable)
+#       google-chrome-beta  (pull latest beta)
+#============================================
+ARG CHROME_VERSION="google-chrome-stable"
+
+COPY sources.list /etc/apt/sources.list
+
+#RUN apt-key add /tmp/linux_signing_key.pub \
+#  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+#  && apt-get update -qqy \
+#  && apt-get -qqy install \
+#    ${CHROME_VERSION:-google-chrome-stable} \
+#  && rm /etc/apt/sources.list.d/google-chrome.list \
+#  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+COPY chrome.deb /tmp/deb/chrome.deb
+
+RUN dpkg -i /tmp/deb/chrome.deb; exit 0
+RUN apt-get update -qqy
+RUN apt-get -f -y install

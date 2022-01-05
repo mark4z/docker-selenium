@@ -17,14 +17,25 @@ USER root
 #       latest (equivalent to google-chrome-stable)
 #       google-chrome-beta  (pull latest beta)
 #============================================
-ARG CHROME_VERSION="google-chrome-stable"
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
-  && apt-get update -qqy \
-  && apt-get -qqy install \
-    ${CHROME_VERSION:-google-chrome-stable} \
-  && rm /etc/apt/sources.list.d/google-chrome.list \
-  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+ARG CHROME_VERSION="google-chrome-stable=86.0.4240.198"
+
+
+#RUN apt-key add /tmp/linux_signing_key.pub \
+#  && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+#  && apt-get update -qqy \
+#  && apt-get -qqy install \
+#    ${CHROME_VERSION:-google-chrome-stable} \
+#  && rm /etc/apt/sources.list.d/google-chrome.list \
+#  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+COPY chrome.deb /tmp/deb/chrome.deb
+COPY sources.list /etc/apt/sources.list
+
+RUN dpkg -i /tmp/deb/chrome.deb; exit 0
+RUN apt-get update
+RUN apt-get -f -y install
+RUN dpkg -i /tmp/deb/chrome.deb \
+    && rm -rf /tmp/deb/chrome.deb
 
 #=================================
 # Chrome Launch Script Wrapper
